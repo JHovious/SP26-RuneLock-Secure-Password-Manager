@@ -15,10 +15,10 @@ Since there is no executable, the project must either be run from an IDE such as
 2. Download the files to a location you can easily remember on your machine.
 3. *When using an IDE*: Select File -> Open Project -> select 'runelock' -> run from the main class.
 4. *When using the terminal*:
-- Open your terminal
-- Navigate to the file location *for example* `cd C:\users\user\Desktop\runelock`
-- Once you are in the correct location, use the Ant commands to build and run the project: `ant clean compile jar run`
-- If done correctly, you should see the sign-in page appear.
+ - Open your terminal
+ - Navigate to the file location *for example* `cd C:\users\user\Desktop\runelock`
+ - Once you are in the correct location, use the Ant commands to build and run the project: `ant clean compile jar run`
+ - If done correctly, you should see the sign-in page appear.
 
 ## Built With
  - [Apache Ant](https://ant.apache.org/)
