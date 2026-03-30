@@ -1,5 +1,3 @@
-
-
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Main.java to edit this template
@@ -22,6 +20,7 @@ public class SEProject extends Application{
     @Override
     
     public void start(Stage stage){
+        JSONControl controller = new JSONControl();
         mainWindow main = new mainWindow();
         Label usernameLabel = new Label("Username:");
         //usernameLabel.setStyle("-fx-font-size: 20px; -fx-text-fill: #0076a3;");
@@ -40,8 +39,13 @@ public class SEProject extends Application{
 
             System.out.println("Username: " + username);
             System.out.println("Password: " + password);
-            stage.close();
-            main.showMenu();
+            if (controller.verifyLogin(username, password)){
+                stage.close();
+                main.showMenu(controller);
+            }else{
+                stage.close();
+            }
+            
         });
 
         
