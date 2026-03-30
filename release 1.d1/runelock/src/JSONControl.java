@@ -70,17 +70,11 @@ public class JSONControl {
                 
                 for (File f : files){
                     if (f.isFile()){
-                        System.out.println("Testing2");
                         Account account = myMapper.readValue(f, Account.class);
                         this.user.accounts.add(account);
                         System.out.println("This is the account url: " + account.getURL());
-                    }else{
-                        System.out.println("Testing3");
-                    }
-                    
+                    } 
                 }
-            }else{
-                System.out.println("Testing");
             }
         } catch (Exception e){
             System.out.println("There was an error loading accounts");
