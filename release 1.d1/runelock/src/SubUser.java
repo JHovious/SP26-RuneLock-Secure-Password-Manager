@@ -1,3 +1,6 @@
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
@@ -8,9 +11,14 @@
  * @author ckurd
  */
 public class SubUser {
-    private String username;
-    private String password;
+    @JsonProperty("username")
+    String username;
+    @JsonProperty("password")
+    String password;
+    @JsonProperty("name")
     private String name;
+    @JsonProperty("fileNumber")
+    String fileNumber;
     
     public SubUser(){
         this.username = "";
@@ -35,4 +43,13 @@ public class SubUser {
     public String getName(){
         return this.name;
     }
+    
+    public String getfileNumber(){
+        return this.fileNumber;
+    }
+    public void setFileNumber(String aFileNumber){
+        this.fileNumber = aFileNumber;
+    }
+    
+    
 }
