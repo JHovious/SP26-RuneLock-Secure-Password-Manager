@@ -1,6 +1,4 @@
 
-
-
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
@@ -10,6 +8,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.BorderPane;
+import java.util.ArrayList;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -23,10 +22,11 @@ import javafx.scene.layout.BorderPane;
 public class AddAccount {
     //Maybe pass old objects for window control
     
-    public void showWindow(){
+    public void showWindow(JSONControl aController){
+        JSONControl controller = aController;
         Stage stage = new Stage();
-        Label title = new Label("Create An Account");
-        title.setStyle("-fx-font-size: 100px; -fx-text-fill: #0076a3;");
+        Label title = new Label("Add An Account");
+        title.setStyle("-fx-font-size: 50px; -fx-text-fill: #0076a3;");
         
         Label websiteLabel = new Label("Enter website URL:");
         //Need format verification for allowable URL
@@ -82,8 +82,12 @@ public class AddAccount {
             String username = usernameText.getText();
             String password = passwordText.getText();
             String tag = tagText.getText();
+            ArrayList tags = new ArrayList();
+            tags.add(tag);
 
             //do something with the variables above
+            controller.addAccount(url, username, password, tags);
+            tags = null;//For garbage collection to remove empty array
             stage.close();
         });
         
@@ -98,7 +102,7 @@ public class AddAccount {
         mainPane.setTop(vbox);
         mainPane.setCenter(tagBox);
         mainPane.setBottom(submitBox);
-        Scene scene = new Scene(mainPane, 1000, 1000); //Window
+        Scene scene = new Scene(mainPane, 600, 600); //Window
         
         stage.setScene(scene);
         stage.setTitle("RuneLock");
