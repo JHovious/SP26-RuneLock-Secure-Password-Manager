@@ -25,8 +25,8 @@ import javafx.geometry.Insets;
  */
 public class mainWindow {
     
-    public void showMenu(){
-         
+    public void showMenu(JSONControl aController){
+         JSONControl controller = aController;
          
         //My code
         Image settingsImage;
@@ -130,7 +130,7 @@ public class mainWindow {
          
         //Build window 
         Stage stage = new Stage();
-        Scene scene = new Scene(mainPane, 1000, 1000); //Window
+        Scene scene = new Scene(mainPane, 600, 600); //Window
         stage.setScene(scene);
         stage.setTitle("RuneLock");
         stage.show();
