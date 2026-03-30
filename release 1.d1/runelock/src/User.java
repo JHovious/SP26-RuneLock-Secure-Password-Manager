@@ -17,7 +17,7 @@ public class User {
     ArrayList<ArrayList> tempSubAccounts;
     @JsonProperty("UUID")
     String uID;
-    ArrayList accounts;
+    ArrayList accounts = new ArrayList();
     ArrayList<SubUser> subAccounts = new ArrayList();
     
     
