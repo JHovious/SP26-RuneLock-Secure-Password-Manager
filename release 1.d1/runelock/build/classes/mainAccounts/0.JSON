@@ -1,7 +1,9 @@
 {
-	"username" : "Test",
-	"password" : "Test",
-	"sub" : true,
-	"subAccounts" : [["John", "bigJohn45", "TheBiggest1ohn!!"], ["Lindy", "littleLinda", "johnIsnotBig45&"]],
-	"UUID" : 1
-} 
+  "username" : "Test",
+  "password" : "Test",
+  "sub" : true,
+  "subAccounts" : [],
+  "uid" : "1",
+  "subFileNum" : "3",
+  "accountFileNum" : "3"
+}
