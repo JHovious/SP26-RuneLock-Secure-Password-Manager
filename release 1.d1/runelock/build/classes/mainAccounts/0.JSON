@@ -1,0 +1,7 @@
+{
+	"username" : "Test",
+	"password" : "Test",
+	"sub" : true,
+	"subAccounts" : [["John", "bigJohn45", "TheBiggest1ohn!!"], ["Lindy", "littleLinda", "johnIsnotBig45&"]],
+	"UUID" : 1
+} 
