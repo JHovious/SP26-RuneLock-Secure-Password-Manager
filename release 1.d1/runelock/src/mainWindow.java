@@ -34,6 +34,7 @@ public class mainWindow {
         Image dummyImage;
         AddAccount addAccountObject = new AddAccount();
         Settings settingsWindow = new Settings();
+        AddSub addSubObject = new AddSub();
          try{//Read in Settings image
              settingsImage = new Image(getClass().getResourceAsStream("/images/setting.png"));
          } catch(Exception e){
@@ -76,17 +77,42 @@ public class mainWindow {
          //Event listener for add password window
          addPasswordButton.setOnAction(e -> {
             System.out.println("Opening add password window");
-            addAccountObject.showWindow();
+            addAccountObject.showWindow(controller);
         });
          
-         //Create imageView for dummy database
+         //Create imageView for add Sub account and create button
+         ImageView subView = new ImageView(plusImage);
+         subView.setFitWidth(30);
+         subView.setFitHeight(30);
+         subView.setPreserveRatio(true);
+         Button addSubButton = new Button("Add A Sub Account");
+         addSubButton.setGraphic(subView);
+         //Event listener for add sub account window
+         addSubButton.setOnAction(e -> {
+            System.out.println("Opening add sub account window");
+            //call method here
+            addSubObject.showWindow(controller);
+         });
+         /*//Create imageView for dummy database
          ImageView dummyView = new ImageView(dummyImage);
          dummyView.setFitWidth(800);
          dummyView.setFitHeight(800);
-         dummyView.setPreserveRatio(true);
+         dummyView.setPreserveRatio(true);*/
+         
+         Button testButton = new Button("Load accounts");//For testing purposes
+         testButton.setOnAction(e -> {
+             System.out.println("Searching database");
+             controller.loadAccountFiles();
+         });
+         Button test2Button = new Button("Load Sub accounts");//For testing purposes
+         test2Button.setOnAction(e -> {
+             System.out.println("Searching database");
+             controller.loadSubFiles();
+             
+         });
          
          //Aligning dummy database to center of scene
-         VBox centerBox = new VBox(dummyView);
+         VBox centerBox = new VBox(testButton, test2Button);
          centerBox.setAlignment(Pos.TOP_CENTER);
          centerBox.setPadding(new Insets(20, 0, 0, 0));
          
@@ -117,7 +143,7 @@ public class mainWindow {
         
          
          //Make box for Settings and add password
-         HBox bottomBox = new HBox(15, settingsButton, addPasswordButton);
+         HBox bottomBox = new HBox(15, settingsButton, addPasswordButton, addSubButton);
          bottomBox.setStyle("-fx-padding: 20px;");
          
          //BorderPane for controlling overall layout
