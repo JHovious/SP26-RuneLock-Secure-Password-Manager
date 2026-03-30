@@ -67,16 +67,24 @@ public class JSONControl {
             }
             File[] files = folder.listFiles();
             if (files != null){
+                
                 for (File f : files){
                     if (f.isFile()){
+                        System.out.println("Testing2");
                         Account account = myMapper.readValue(f, Account.class);
                         this.user.accounts.add(account);
+                        System.out.println("This is the account url: " + account.getURL());
+                    }else{
+                        System.out.println("Testing3");
                     }
                     
                 }
+            }else{
+                System.out.println("Testing");
             }
         } catch (Exception e){
             System.out.println("There was an error loading accounts");
+            System.out.println(e);
         }
     }
     
@@ -87,12 +95,12 @@ public class JSONControl {
     
     //Method to store sub account files
     
+    //Method to store mainAccount files
+    
     //Method to store settings
     
     //Method to read settings
     
-    //Method to store main file
-    
-    //Method to check if username/password exist in file
+    //Method to check if username/password exist in accounts file
     
 }
