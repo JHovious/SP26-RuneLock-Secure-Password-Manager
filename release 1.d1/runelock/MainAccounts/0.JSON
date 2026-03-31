@@ -1,0 +1,15 @@
+{
+  "username" : "Test",
+  "password" : "Test",
+  "sub" : true,
+  "subAccounts" : [ {
+    "username" : "topBrody",
+    "password" : "9876",
+    "name" : "Brody",
+    "fileNumber" : "0"
+  } ],
+  "uid" : "1",
+  "subFileNum" : "7",
+  "accountFileNum" : "9",
+  "mainFileNum" : "0"
+}
