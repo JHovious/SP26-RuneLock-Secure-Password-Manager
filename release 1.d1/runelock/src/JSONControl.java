@@ -20,6 +20,7 @@ public class JSONControl {
     private Boolean check;//Used if file loaded successfully
     private Security securityObject;
     private ObjectMapper myMapper;
+    private int newFileNum;
     
     
     //Constructor
@@ -30,12 +31,13 @@ public class JSONControl {
         this. myMapper = new ObjectMapper();
         myMapper.registerModule(new JavaTimeModule());
         myMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        newFileNum = 0;
 
     }
     
     //Method to verify initial login
     public Boolean verifyLogin(String username, String password){
-        loadMainFile();
+        loadMainFile(username);
         if (this.check){
             Boolean newCheck;
             newCheck = this.securityObject.verifyLogin(username, password);
@@ -49,13 +51,26 @@ public class JSONControl {
     }
     
     //Method to load the main id check file
-    public void loadMainFile(){
+    public void loadMainFile(String aUsername){
         try{
-            InputStream in = getClass().getResourceAsStream("/mainAccounts/0.json");
-            this.user = myMapper.readValue(in, User.class);
-            
-            this.check = true;
-        }catch (Exception e){
+            File folder = new File ("MainAccounts");
+            if (!folder.exists()){//If there are no main accounts make the folder for use later
+                folder.mkdirs();
+            }
+            File[] files = folder.listFiles();
+            if (files != null){//If files exist
+                for (File f : files){
+                    if (f.isFile()){
+                        this.user = myMapper.readValue(f, User.class);
+                        if (aUsername.equals(this.user.username)){
+                            this.check = true;
+                        }else{
+                            this.user = null;
+                        }
+                    }
+                }
+            }
+        }catch(Exception e){//On failure
             System.out.println("There was an error loading mainFile.json");
             System.out.println(e);
             this.check = false;
@@ -107,6 +122,7 @@ public class JSONControl {
             System.out.println(e);
         }
     }
+    
     //Method to add new account object and make file
     public void addAccount(String aUrl, String aUsername, String aPassword, ArrayList tags){
         LocalDate createdDate = LocalDate.now();
@@ -114,6 +130,7 @@ public class JSONControl {
         Account newAccount = new Account(aUrl, aUsername, aPassword, tags, createdDate, lastUsed, this.user.accountFileNum);
         storeAccountData(newAccount);
     }
+    
     //Method to store account files
     public void storeAccountData(Account anAccount){
         try{
@@ -132,7 +149,7 @@ public class JSONControl {
             int fileNumber = Integer.parseInt(this.user.accountFileNum);//Turn into integer
             fileNumber += 1;
             this.user.accountFileNum = String.valueOf(fileNumber);//Turn back into string
-            storeMainAccount();//Method call to update user mainfile
+            storeMainAccount(this.user.username, this.user.password);//Method call to update user mainfile
             System.out.println("Success adding account");
             
         }catch (Exception e){
@@ -141,7 +158,7 @@ public class JSONControl {
         }
     }
     
-    //Method to store sub account files !!!!!!!!UNTESTED!!!!!!!!!
+    //Method to store sub account files
     public void storeSubAccount(String aName, SubUser aUser){
         try{
             String folderPath = "SubAccounts/";
@@ -158,7 +175,7 @@ public class JSONControl {
                     break;
                 }
             }
-            if (check){
+            if (check){//If subuser exists in user.subaccounts
                 File currentFile = new File(folder, "Sub" + tempUser.fileNumber + ".json");
                 System.out.println("Writing to: " + currentFile.getAbsolutePath());//testing for where currentFile is being saved
                 System.out.println("This is current account file num: " + this.user.subFileNum);
@@ -166,7 +183,7 @@ public class JSONControl {
                 ObjectWriter writer = myMapper.writerWithDefaultPrettyPrinter();
                 writer.writeValue(currentFile, tempUser);
                 System.out.println("Success updating sub account");
-            }else{
+            }else{//Not a subuser yet and needs main account file
                 tempUser = aUser;
                 File currentFile = new File(folder, "Sub" + this.user.subFileNum + ".json");
                 System.out.println("Writing to: " + currentFile.getAbsolutePath());//testing for where currentFile is being saved
@@ -174,10 +191,9 @@ public class JSONControl {
                 tempUser.setFileNumber(this.user.subFileNum);
                 ObjectWriter writer = myMapper.writerWithDefaultPrettyPrinter();
                 writer.writeValue(currentFile, tempUser);
-                int fileNumber = Integer.parseInt(this.user.subFileNum);//Turn into integer
-                fileNumber += 1;
-                this.user.subFileNum = String.valueOf(fileNumber);//Turn back into string
-                storeMainAccount();//Method call to update user mainfile
+                this.user.subFileNum = incrementCounter(this.user.subFileNum);//Turn back into string
+                storeMainAccount(this.user.username, this.user.password);//Method call to update user mainfile
+                createMainAccount(tempUser.username, tempUser.password);
                 System.out.println("Success updating sub account");
             }
         } catch(Exception e){
@@ -187,19 +203,40 @@ public class JSONControl {
     }
     
     //Method to store mainAccount files
-    public void storeMainAccount(){
+    public void storeMainAccount(String aUsername, String aPassword){
 
         try{
 
-            String folderPath = "build/classes/mainAccounts/";
-            File folder = new File(folderPath);
-
-            File currentFile = new File(folder, "0.json");
-            System.out.println("Writing to: " + currentFile.getAbsolutePath());//testing for where currentFile is being saved
-            
+            File folder = new File("MainAccounts");
+            if (!folder.exists()){//If there are no main accounts make the folder for use later
+                folder.mkdirs();
+            }
             ObjectWriter writer = myMapper.writerWithDefaultPrettyPrinter();
-            writer.writeValue(currentFile, this.user);
+            File[] files = folder.listFiles();
+            if (files != null){//If files exist
+                User tempUser;
             
+                for (File f : files){
+                    if (f.isFile()){
+                        tempUser = myMapper.readValue(f, User.class);
+                        if (aUsername.equals(tempUser.username)){
+                            if (aPassword.equals(tempUser.password)){//If username and password exist in a file
+                                System.out.println("Writing to: " + f.getAbsolutePath());//testing for where currentFile is being saved
+                                writer.writeValue(f, this.user);
+                            }else{//If username and password don't exist in a file
+                                File newFile = new File(folder, this.user.mainFileNum + ".json");
+                                System.out.println("Writing to: " + newFile.getAbsolutePath());
+                                writer.writeValue(newFile, this.user);
+                            }
+                        }
+                    }
+                }
+            }else{//If there are no files for main accounts
+                File newFile = new File(folder, this.user.mainFileNum + ".json");
+                System.out.println("Writing to: " + newFile.getAbsolutePath());
+                writer.writeValue(newFile, this.user);
+                this.user.mainFileNum = incrementCounter(this.user.mainFileNum);//Incremement value
+            }    
             
         }catch (Exception e){
             System.out.println("There was an error saving main account info");
@@ -207,9 +244,61 @@ public class JSONControl {
         }
     }
     
+    //Method to create main accounts
+    public void createMainAccount(String aUsername, String aPassword){
+        //Pull filenumber from highest existing in files
+        try{
+            File folder = new File("MainAccounts");
+            if (!folder.exists()){//If there are no main accounts make the folder for use later
+                    folder.mkdirs();
+            }
+            ObjectWriter writer = myMapper.writerWithDefaultPrettyPrinter();
+            File[] files = folder.listFiles();
+            if (files != null){//If files exist
+                int currentHigh;
+                int newHigh = 0;
+                int currentID;
+                int newID = 0;
+                User tempUser;
+
+                for (File f : files){
+                    if (f.isFile()){
+                            tempUser = myMapper.readValue(f, User.class);
+                            currentHigh = Integer.parseInt(tempUser.mainFileNum);
+                            currentID = Integer.parseInt(tempUser.uid);
+                            if (currentHigh > newHigh){//Find new filename for a user
+                                newHigh = currentHigh;
+                            }
+                            if (currentID > newID){//Find new ID for a user
+                                newID = currentID;
+                            }
+                    }
+                }
+                String newFileNum = incrementCounter(String.valueOf(newHigh));
+                String newUID = incrementCounter(String.valueOf(newID));
+                User newUser = new User(aUsername, aPassword, true, newUID, newFileNum);
+                File newFile = new File(folder, newFileNum + ".json");
+                writer.writeValue(newFile, newUser);
+                
+            }
+                
+        }catch (Exception e){
+            System.out.println("There was an error creating a new account");
+            System.out.println(e);
+        }
+    }
+    
+    public String incrementCounter(String aNumber){
+        int number = Integer.parseInt(aNumber);//Turn into integer
+        number += 1;
+        return String.valueOf(number);//Turn back into string
+    }
+    
     //Method to store settings
     
     //Method to read settings
+    
+    //Methods for deleting things
     
     //Method to check if username/password exist in accounts file
     
