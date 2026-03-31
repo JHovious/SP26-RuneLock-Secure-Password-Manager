@@ -27,10 +27,27 @@ public class User {
     String subFileNum;
     @JsonProperty("accountFileNum")
     String accountFileNum;
+    @JsonProperty("mainFileNum")
+    String mainFileNum;
     
     @JsonIgnore
     ArrayList accounts = new ArrayList();//Change to set?
     
+    public User(){
+        
+    }
+    
+    public User(String username, String aPassword, Boolean sub, String uuid, String fileNum){
+        this.username = username;
+        this.password = aPassword;
+        this.isSub = sub;
+        this.uid = uuid;
+        this.subFileNum = "0";
+        this.accountFileNum = "0";
+        this.mainFileNum = fileNum;
+        this.subAccounts = new ArrayList();
+        this.accounts = new ArrayList();
+    }
     
     
     public String getUsername(){
@@ -64,5 +81,9 @@ public class User {
     
     public String getAccountFileNum(){
         return this.accountFileNum;
+    }
+    
+    public String getmainFileNum(){
+        return this.mainFileNum;
     }
 }
