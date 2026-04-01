@@ -1,0 +1,10 @@
+{
+  "username" : "justin",
+  "password" : "password",
+  "sub" : true,
+  "subAccounts" : [ ],
+  "uid" : "8",
+  "subFileNum" : "0",
+  "accountFileNum" : "1",
+  "mainFileNum" : "7"
+}
