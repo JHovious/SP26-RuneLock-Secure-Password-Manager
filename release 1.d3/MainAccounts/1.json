@@ -1,0 +1,19 @@
+{
+  "sub" : false,
+  "username" : "main",
+  "password" : "main",
+  "parentUid" : null,
+  "subAccounts" : [ {
+    "uid" : "3",
+    "username" : "sub",
+    "name" : "subuser"
+  }, {
+    "uid" : "4",
+    "username" : "demo",
+    "name" : "test"
+  } ],
+  "uid" : "1",
+  "subFileNum" : "0",
+  "accountFileNum" : "12",
+  "mainFileNum" : "1"
+}
