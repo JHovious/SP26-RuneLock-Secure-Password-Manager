@@ -6,7 +6,7 @@ By providing users with an offline, encrypted database hosted on their own machi
 
 ## Getting Started  
 
-In its current state, there is no executable ready for RuneLock. To use this project, copy the files from our most current release folder: [release 1.d3](https://github.com/JHovious/SP26-RuneLock-Secure-Password-Manager/tree/main/release%201.d3)
+In its current state, there is no executable ready for RuneLock. To use this project, copy the files from our most current release folder: [release 1.d4](https://github.com/JHovious/SP26-RuneLock-Secure-Password-Manager/tree/main/release1.d4/runelock)
 Since there is no executable, the project must either be run from an IDE such as NetBeans *(preferred)*, or by compiling and building the project from your terminal with Ant. 
 
 ## Installing
