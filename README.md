@@ -4,6 +4,12 @@ The purpose of RuneLock is to provide secure password management for families, b
 RuneLock allows users to manage their own data easily and effectively without fear of their information being shared or sold to third parties. 
 By providing users with an offline, encrypted database hosted on their own machines, we aim to give them reassurance that their data is safe and in their own hands.
 
+## Dependencies
+To run RuneLock in its current state, ensure you have installed the following packages on your machine: 
+- Apache Ant: 1.10.15 or newer
+- Java JDK 23 or newer
+- JavaFX SDK: 21.0.10 or newer
+
 ## Getting Started  
 
 In its current state, there is no executable ready for RuneLock. To use this project, copy the files from our most current release folder: [release 1.d4](https://github.com/JHovious/SP26-RuneLock-Secure-Password-Manager/tree/main/release1.d4/runelock)
@@ -17,7 +23,9 @@ Since there is no executable, the project must either be run from an IDE such as
 4. *When using the terminal*:
  - Open your terminal
  - Navigate to the file location *for example* `cd C:\users\user\Desktop\runelock`
- - Once you are in the correct location, use the Ant commands to build and run the project: `ant clean compile jar run`
+ - Once you are in the correct location, use the Ant commands to build and run the project: `ant clean compile`
+ - After compiling, navigate to the folder `runelock/dist` and confirm the file `runelock.jar` is present.
+ - Once you have found the jar file, enter `java -jar runelock.jar`
  - If done correctly, you should see the sign-in page appear.
 
 ## Built With
