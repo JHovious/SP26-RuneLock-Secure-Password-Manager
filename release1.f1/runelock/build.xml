@@ -1,9 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-    Custom Ant build script for RuneLock.
-    This file handles OS detection, JavaFX installation, compilation with JavaFX and Jackson dependencies,
-    and running the app from the build directory.
--->
 <project name="runelock" default="run" basedir=".">
 
     <!-- CONFIGURATION -->
@@ -12,9 +7,6 @@
     <property name="dist.dir" value="dist"/>
     <property name="main.class" value="controller.App"/>
 
-    <!-- JavaFX jars bundled with the project -->
-    <property name="javafx.home" value="C:/javafx-sdk-21"/>
-    <property name="javafx.lib" value="${javafx.home}/lib"/>
 
     <!-- Detect OS -->
     <condition property="is.windows">
@@ -28,6 +20,23 @@
     <condition property="is.linux">
         <os family="unix"/>
     </condition>
+    
+    <!-- Set JavaFX home based on OS -->
+    <condition property="javafx.home" value="C:/javafx-sdk-21">
+        <isset property="is.windows"/>
+    </condition>
+
+    <condition property="javafx.home" value="/usr/share/openjfx">
+        <isset property="is.linux"/>
+    </condition>
+
+    <condition property="javafx.home" value="/opt/homebrew/opt/javafx/libexec">
+        <isset property="is.mac"/>
+    </condition>
+
+    <!-- JavaFX lib folder -->
+    <property name="javafx.lib" value="${javafx.home}/lib"/>
+
 
 
     <!-- JAVAFX INSTALLATION TASKS -->
@@ -47,7 +56,7 @@
         </condition>
 
         <!-- Windows -->
-        <condition property="install.cmd" value="echo Please install JavaFX manually from https://openjfx.io">
+        <condition property="install.cmd" value="echo Please install JavaFX manually from https://openjfx.io if it's not already installed.">
             <isset property="is.windows"/>
         </condition>
 
@@ -69,10 +78,6 @@
 
     <target name="clean">
         <delete dir="${build.dir}"/>
-	<delete dir="Accounts"/>
-	<delete dir="MainAccounts"/>
-	<delete dir="Security"/>
-	<delete dir="Accounts"/>
     </target>
 
     <target name="prepare">
