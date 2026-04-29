@@ -1,10 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
     Custom Ant build script for RuneLock.
     This file handles OS detection, JavaFX installation, compilation with JavaFX and Jackson dependencies,
     and running the app from the build directory.
 -->
-
-<?xml version="1.0" encoding="UTF-8"?>
 <project name="runelock" default="run" basedir=".">
 
     <!-- CONFIGURATION -->
@@ -70,6 +69,10 @@
 
     <target name="clean">
         <delete dir="${build.dir}"/>
+	<delete dir="Accounts"/>
+	<delete dir="MainAccounts"/>
+	<delete dir="Security"/>
+	<delete dir="Accounts"/>
     </target>
 
     <target name="prepare">
