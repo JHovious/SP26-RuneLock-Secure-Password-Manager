@@ -8,7 +8,7 @@ By providing users with an offline, encrypted database hosted on their own machi
 ## Dependencies (Must be installed before running)
 To run RuneLock in its current state, ensure you have the following packages with the correct versions installed on your machine. 
 If you do not have the correct version or the package is missing, skip to the next section for instructions on installing them for your specific operating system. 
-- Apache Ant: 1.10.15 or newer. 
+- Apache Ant: 1.10.14 or newer. 
 - Java JDK 23 or newer. 
 - JavaFX SDK: 21.0.10 or newer
 
