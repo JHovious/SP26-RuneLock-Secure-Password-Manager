@@ -86,10 +86,6 @@ public class LanSyncService {
         System.out.println("LanSyncService stopped.");
     }
     
-    // -------------------------------------------------------------------------
-    // BOOTSTRAP - Static method called before login, no full instance needed
-    // -------------------------------------------------------------------------
-    
     /**
      * Broadcasts a bootstrap request for the given username and waits for a
      * peer to respond with the .enc and .p12 files needed to log in.
@@ -102,7 +98,7 @@ public class LanSyncService {
         System.out.println("Broadcasting bootstrap request for user: " + username);
         
         try {
-            // Step 1: Broadcast UDP request so peers know we need files
+            // Broadcast UDP request so peers know we need files
             String requestPayload = BOOTSTRAP_REQUEST_MAGIC + "|" + username + "|" + DeviceIdUtil.getDeviceId();
             byte[] data = requestPayload.getBytes("UTF-8");
             
@@ -116,14 +112,12 @@ public class LanSyncService {
                 BOOTSTRAP_PORT
             );
             
-            // Step 2: Open a TCP server socket to receive the files
-            // We pick an ephemeral port and include it in the broadcast
-            // so the responding peer knows where to connect
+            // Open a TCP server socket to receive the files
             ServerSocket receiveServer = new ServerSocket(0);
             int receivePort = receiveServer.getLocalPort();
             receiveServer.setSoTimeout(10000); // 10 second timeout waiting for a peer
             
-            // Re-build payload with our receive port included
+            // Re-build payload with receive port included
             String fullPayload = BOOTSTRAP_REQUEST_MAGIC + "|" + username + "|" + DeviceIdUtil.getDeviceId() + "|" + receivePort;
             byte[] fullData = fullPayload.getBytes("UTF-8");
             DatagramPacket fullPacket = new DatagramPacket(
@@ -142,7 +136,7 @@ public class LanSyncService {
             
             System.out.println("Bootstrap request sent. Waiting for peer response on port " + receivePort + "...");
             
-            // Step 3: Wait for a peer to connect and send the files
+            // Wait for a peer to connect and send the files
             try {
                 Socket peer = receiveServer.accept();
                 boolean success = receiveBootstrapFiles(peer);
@@ -174,13 +168,13 @@ public class LanSyncService {
             }
             
             // Read .enc file
-            String encFileName = dataIn.readUTF();         // e.g. "1.enc"
+            String encFileName = dataIn.readUTF();   
             int encLength = dataIn.readInt();
             byte[] encBytes = new byte[encLength];
             dataIn.readFully(encBytes);
             
             // Read .p12 file
-            String p12FileName = dataIn.readUTF();         // e.g. "1.p12"
+            String p12FileName = dataIn.readUTF(); 
             int p12Length = dataIn.readInt();
             byte[] p12Bytes = new byte[p12Length];
             dataIn.readFully(p12Bytes);
@@ -203,11 +197,6 @@ public class LanSyncService {
             return false;
         }
     }
-    
-    // -------------------------------------------------------------------------
-    // BOOTSTRAP LISTEN - Runs on logged-in devices, responds to requests
-    // -------------------------------------------------------------------------
-    
     /**
      * Listens for bootstrap requests from new devices and responds with the
      * requested user's .enc and .p12 files if they exist locally.
@@ -266,8 +255,6 @@ public class LanSyncService {
                                " from device: " + requesterDeviceId);
             
             // Find the .enc file that matches this username
-            // We do this by scanning MainAccounts/ and checking filenames
-            // The logged-in user's mainFileNum tells us the filename
             User currentUser = controller.getUser();
             if (currentUser == null) return;
             
@@ -308,9 +295,7 @@ public class LanSyncService {
         }
     }
     
-    /**
-     * Connects to the requesting device and sends the .enc and .p12 files.
-     */
+    // Connects to the requesting device and sends the .enc and .p12 files.
     private void sendBootstrapFiles(InetAddress address, int port, File encFile, File p12File) {
         Thread sendThread = new Thread(() -> {
             try (Socket socket = new Socket(address, port);
@@ -342,10 +327,6 @@ public class LanSyncService {
         sendThread.setDaemon(true);
         sendThread.start();
     }
-
-    // -------------------------------------------------------------------------
-    // All existing methods below are unchanged
-    // -------------------------------------------------------------------------
     
     private void startSyncServerThread() {
         syncServerThread = new Thread(() -> {
