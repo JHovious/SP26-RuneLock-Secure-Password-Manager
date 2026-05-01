@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    RuneLock build.xml
+    Authors: Christian Kurdi, Justin Hovious
+
+
+-->
+<project name="runelock"
+         default="run"
+         basedir="."
+         xmlns:jacoco="antlib:org.jacoco.ant">
+
+    <!-- CONFIGURATION -->
+    <property name="src.dir"      value="src"/>
+    <property name="test.dir"     value="test"/>
+    <property name="build.dir"    value="build/classes"/>
+    <property name="test.build"   value="build/test/classes"/>
+    <property name="test.results" value="build/test/results"/>
+    <property name="report.dir"   value="build/coverage-report"/>
+    <property name="exec.file"    value="build/jacoco.exec"/>
+    <property name="dist.dir"     value="dist"/>
+    <property name="main.class"   value="controller.App"/>
+
+    <!-- DETECT OS -->
+    <condition property="is.windows">
+        <os family="windows"/>
+    </condition>
+    <condition property="is.mac">
+        <os family="mac"/>
+    </condition>
+    <condition property="is.linux">
+        <os family="unix"/>
+    </condition>
+
+    <!-- SET JAVAFX HOME BASED ON OS -->
+    <condition property="javafx.home" value="C:/javafx-sdk-21">
+        <isset property="is.windows"/>
+    </condition>
+    <condition property="javafx.home" value="/usr/share/openjfx">
+        <isset property="is.linux"/>
+    </condition>
+    <condition property="javafx.home" value="/opt/homebrew/opt/javafx/libexec">
+        <isset property="is.mac"/>
+    </condition>
+
+    <property name="javafx.lib" value="${javafx.home}/lib"/>
+
+    <!-- JACOCO TASK DEFINITION -->
+    <taskdef uri="antlib:org.jacoco.ant"
+             resource="org/jacoco/ant/antlib.xml">
+        <classpath path="dist/lib/jacocoant.jar"/>
+    </taskdef>
+
+    <!-- JAVAFX INSTALLATION -->
+    <target name="install-javafx" description="Install JavaFX depending on OS">
+
+        <condition property="install.cmd" value="brew install javafx">
+            <isset property="is.mac"/>
+        </condition>
+        <condition property="install.cmd" value="sudo apt install -y openjfx">
+            <and>
+                <isset property="is.linux"/>
+                <available file="/usr/bin/apt"/>
+            </and>
+        </condition>
+        <condition property="install.cmd"
+                   value="echo Please install JavaFX manually from https://openjfx.io">
+            <isset property="is.windows"/>
+        </condition>
+
+        <echo message="Running JavaFX installation command: ${install.cmd}"/>
+        <exec executable="sh" osfamily="unix">
+            <arg value="-c"/>
+            <arg value="${install.cmd}"/>
+        </exec>
+        <exec executable="cmd" osfamily="windows">
+            <arg value="/c"/>
+            <arg value="${install.cmd}"/>
+        </exec>
+    </target>
+
+    <!-- CLEAN -->
+    <target name="clean" description="Delete all compiled output">
+        <delete dir="build"/>
+    </target>
+
+    <!-- PREPARE -->
+    <target name="prepare" description="Create build dirs and copy resources">
+        <mkdir dir="${build.dir}"/>
+        <copy todir="${build.dir}">
+            <fileset dir="src">
+                <include name="images/**"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <!-- COMPILE -->
+    <target name="compile" depends="prepare" description="Compile source code">
+        <javac srcdir="${src.dir}"
+               destdir="${build.dir}"
+               includeantruntime="false">
+            <classpath>
+                <fileset dir="${javafx.lib}" includes="*.jar"/>
+                <fileset dir="dist/lib"     includes="jackson-*.jar"/>
+            </classpath>
+        </javac>
+    </target>
+
+    <!-- COMPILE-TESTS -->
+    <target name="compile-tests" depends="compile" description="Compile JUnit 4 test sources">
+
+        <mkdir dir="${test.build}"/>
+
+        <javac srcdir="${test.dir}"
+               destdir="${test.build}"
+               includeantruntime="false"
+               debug="true">
+            <classpath>
+                <!-- Compiled production classes -->
+                <pathelement path="${build.dir}"/>
+                <!-- JavaFX (needed because production classes import it) -->
+                <fileset dir="${javafx.lib}" includes="*.jar"/>
+                <!-- Jackson, JUnit 4, Hamcrest, jacocoant -->
+                <fileset dir="dist/lib"     includes="*.jar"/>
+            </classpath>
+        </javac>
+    </target>
+
+    <!-- TEST -->
+    <target name="test" depends="compile-tests" description="Run JUnit 4 tests with JaCoCo instrumentation">
+
+        <mkdir dir="${test.results}"/>
+
+        <jacoco:coverage destfile="${exec.file}">
+            <junit printsummary="yes"
+                   haltonfailure="no"
+                   fork="true"
+                   forkmode="once">
+
+                <jvmarg value="--module-path"/>
+                <jvmarg value="${javafx.lib}"/>
+                <jvmarg value="--add-modules=javafx.controls,javafx.fxml"/>
+
+                <classpath>
+                    <pathelement path="${test.build}"/>
+                    <pathelement path="${build.dir}"/>
+                    <fileset dir="${javafx.lib}" includes="*.jar"/>
+                    <fileset dir="dist/lib"      includes="*.jar"/>
+                </classpath>
+
+                <formatter type="plain"/>
+                <formatter type="xml"/>
+
+                <batchtest todir="${test.results}">
+                    <fileset dir="${test.build}">
+                        <include name="**/*Test.class"/>
+                    </fileset>
+                </batchtest>
+
+            </junit>
+        </jacoco:coverage>
+    </target>
+
+    <!-- COVERAGE-REPORT -->
+    <target name="coverage-report" depends="test" description="Generate JaCoCo HTML, XML, and CSV coverage reports">
+
+        <mkdir dir="${report.dir}"/>
+
+        <jacoco:report>
+
+            <executiondata>
+                <file file="${exec.file}"/>
+            </executiondata>
+
+            <structure name="RuneLock Coverage">
+
+                <classfiles>
+                    <fileset dir="${build.dir}">
+                        <exclude name="view/**"/>
+                        <exclude name="controller/App.class"/>
+                        <exclude name="model/LanSyncService.class"/>
+                    </fileset>
+                </classfiles>
+
+                <sourcefiles encoding="UTF-8">
+                    <fileset dir="${src.dir}"/>
+                </sourcefiles>
+
+            </structure>
+
+            <html destdir="${report.dir}/html"/>
+            <xml  destfile="${report.dir}/report.xml"/>
+            <csv  destfile="${report.dir}/report.csv"/>
+
+        </jacoco:report>
+
+        <echo message=""/>
+        <echo message="================================================"/>
+        <echo message=" Coverage report: build/coverage-report/html/index.html"/>
+        <echo message="================================================"/>
+    </target>
+
+    <!-- RUN -->
+    <target name="run" depends="compile" description="Compile and run the RuneLock application">
+        <java classname="${main.class}" fork="true">
+            <jvmarg value="--module-path"/>
+            <jvmarg value="${javafx.lib}"/>
+            <jvmarg value="--add-modules=javafx.controls,javafx.fxml"/>
+            <classpath>
+                <pathelement path="${build.dir}"/>
+                <fileset dir="${javafx.lib}" includes="*.jar"/>
+                <fileset dir="dist/lib"     includes="jackson-*.jar"/>
+            </classpath>
+        </java>
+    </target>
+
+</project>
