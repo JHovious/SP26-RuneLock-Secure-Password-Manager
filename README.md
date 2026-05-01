@@ -48,7 +48,7 @@ Once that finishes, enter the command `java -version` to verify Java 23 was inst
 ## Getting Started  
 
 In its current state, there is no executable ready for RuneLock. To use this project, copy the files from our most current release folder: 
-[release 1.f1](https://github.com/JHovious/SP26-RuneLock-Secure-Password-Manager/tree/main/release1.f1/runelock) Since there is no executable, 
+[release 1.f2](https://github.com/JHovious/SP26-RuneLock-Secure-Password-Manager/tree/main/release%201.f2) Since there is no executable, 
 the project must be run from the command line with Ant commands. 
 
 ## Installing & Running
@@ -65,6 +65,29 @@ the project must be run from the command line with Ant commands.
  - Open your terminal
  - Navigate to the file location *for example* `cd Desktop/runelock`. Enter the command `ls` and confirm you see the `build.xml` file.
  - Once you are in the correct location, use the Ant commands: `ant install-javafx`. Once the install is finished, enter the Ant command: `ant run`
+
+
+
+## Testing And Generating Code Coverage Reports
+
+**To Generate the Coverage Report Documents**
+1. Using your terminal, use the steps from the previous sections to navigate to the runelock directory folder where the `build.xml` file is located.
+2. Enter the command `ant clean` to clear any previously generated files.
+3. Enter the command `ant coverage-report` to generate JaCoCo HTML, XML, and CSV coverage reports.
+
+- You will see an output in your terminal indicating whether the report was successful and the name of the file.
+- The files will automatically save to `runelock\build\coverage-report`.
+- The easiest method to view the coverage report is to locate the `index.html` file and drag-drop it into your Internet browser.
+
+**To Run the Unit Tests**
+1. Using your terminal, use the steps from the previous sections to navigate to the runelock directory folder where the `build.xml` file is located.
+2. Enter the command `ant clean` to clear any previously generated files.
+3. Enter the command `ant compile-tests` to compile the JUnit 4 test sources.
+4. Enter the command `ant test` to run the JUnit 4 tests with JaCoCo instrumentation.
+
+- You will see an output in your terminal indicating whether the tested cases passed, failed, had errors, etc. As of this build, all unit-tests should pass.
+- You can also find the test results for each test file in `runelock\build\test\results`.
+- Just double-click the .txt files you want to check. 
 
 ## Built With
  - [Apache Ant](https://ant.apache.org/)
